@@ -6,166 +6,167 @@
     <title>Morze</title>
 </head>
 <body>
-    <style>
-        *{
-            margin: 0px;
-            padding: 0px;
-            background-color: white;
-            color: black;
-            width: max-content;
-            height: max-content;
-        }
-        #convert{
-            cursor: pointer;
-            margin: 10px;
-            padding: 8px;
-            background-color: green;
-            color: white;
-            border-radius: 10px;
-        }
-        input.inputDot,input.inputDash{
-            border-top-style: hidden;
-            border-right-style: hidden;
-            border-left-style: hidden;
-            border-bottom-style: hidden;
+<style>
+    *{
+        margin: 0px;
+        padding: 0px;
+        background-color: white;
+        color: black;
+        width: max-content;
+        height: max-content;
+    }
+    #convert{
+        cursor: pointer;
+        margin: 10px;
+        padding: 8px;
+        background-color: green;
+        color: white;
+        border-radius: 10px;
+    }
+    input.inputDot,input.inputDash{
+        border-top-style: hidden;
+        border-right-style: hidden;
+        border-left-style: hidden;
+        border-bottom-style: hidden;
 
-            padding: 2px;
-            width: 9px;
-        }
-        input#input,#output{
-            margin: 10px;
-            padding: 10px;
-            color: black;
-            border-color: grey;
-        }
-        char{
-            color: red;
-        }
-        value{
-            margin-left: 20px;
-            color: gray; 
-        }
-        .msg,p{
-            margin: 10px;
-        }
-        .noselect,.msg,p,#convert,char,br {
-            -webkit-touch-callout: none; /* iOS Safari */
-            -webkit-user-select: none; /* Safari */
-            -khtml-user-select: none; /* Konqueror HTML */
-            -moz-user-select: none; /* Old versions of Firefox */
-            -ms-user-select: none; /* Internet Explorer/Edge */
-            user-select: none; /* Non-prefixed version, currently
+        padding: 2px;
+        width: 9px;
+    }
+    input#input,#output{
+        margin: 10px;
+        padding: 10px;
+        color: black;
+        border-color: grey;
+    }
+    char{
+        color: red;
+    }
+    value{
+        margin-left: 20px;
+        color: gray;
+    }
+    .msg,p{
+        margin: 10px;
+    }
+    .noselect,.msg,p,#convert,char,br {
+        -webkit-touch-callout: none; /* iOS Safari */
+        -webkit-user-select: none; /* Safari */
+        -khtml-user-select: none; /* Konqueror HTML */
+        -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+        user-select: none; /* Non-prefixed version, currently
             supported by Chrome, Edge, Opera and Firefox */
+    }
+    space{
+        width: 100px;
+        background-color: #a6ffa6;
+        color: white;
+    }
+    code{
+        display: inline-block;
+        max-width: 300px;
+    }
+</style><br>
+<div class="msg">
+    Attention, use only latin abc and numbers<br>
+    simbols [ . , / ? ! : ; ` - space @ $ err end ]<br>
+</div>
+
+<p>Change: dot [<input class="inputDot" type="text" value="•" autocomplete="off">] dash [<input class="inputDash" type="text" value="-" autocomplete="off">]</p><br>
+<input id="input" type="text"><a id="convert">Convert</a><br>
+<div id="output"></div>
+
+<img style="width: 450px; height: 450px" src="./monkey-monkey-dancing.gif" alt="">
+<script>
+    const input = document.getElementById('input')
+    const output = document.getElementById('output')
+    const btn = document.getElementById('convert')
+
+    const charToMorze = (x,y = {dot:' • ',dash:' - '}) => {
+        const lib = {
+            'a':[1,0],
+            'b':[0,1,1,1],
+            'c':[0,1,0,1],
+            'd':[0,1,1],
+            'e':[1],
+            'f':[1,1,0,1],
+            'g':[0,0,1],
+            'h':[1,1,1,1],
+            'i':[1,1],
+            'j':[1,0,0,0],
+            'k':[0,1,0],
+            'l':[1,0,1,1],
+            'm':[0,0],
+            'n':[0,1],
+            'o':[0,0,0],
+            'p':[1,0,0,1],
+            'q':[0,0,1,0],
+            'r':[1,0,1],
+            's':[1,1,1],
+            't':[0],
+            'u':[1,1,0],
+            'v':[1,1,1,0],
+            'w':[1,0,0],
+            'x':[0,1,1,0],
+            'y':[0,1,0,0],
+            'z':[0,0,1,1],
+
+            '1':[1,0,0,0,0],
+            '2':[1,1,0,0,0],
+            '3':[1,1,1,0,0],
+            '4':[1,1,1,1,0],
+            '5':[1,1,1,1,1],
+            '6':[0,1,1,1,1],
+            '7':[0,0,1,1,1],
+            '8':[0,0,0,1,1],
+            '9':[0,0,0,0,1],
+            '0':[0,0,0,0,0],
+
+            '.':[1,1,1,1,1,1],
+            ',':[1,0,1,0,1,0],
+            '\/':[0,1,1,0,1],
+            '?':[1,1,0,0,1,1],
+            '!':[0,0,1,1,0,0],
+            ':':[0,0,0,1,1,1],
+            ';':[0,1,0,1,0,1],
+            '`':[1,0,0,0,0,1],
+            '-':[0,1,1,1,1,0],
+            ' ':[0,1,1,1,0],
+            '@':[1,0,0,1,0,1],
+            '$':[1,1,1,0,1,1,0],
+
+            'err':[1,1,1,1,1,1,1,1],
+            'end':[1,1,0,1,0],
         }
-        space{
-            width: 100px;
-            background-color: #a6ffa6;
-            color: white;
+        let char;
+        if (char = lib[x]) {
+            let res =''
+            char.forEach(el => res+=el!=1?y.dash:y.dot);
+            return res.toString()
+        } else {
+            return undefined
         }
-        code{
-            display: inline-block;
-            max-width: 300px;
+    }
+    btn.onclick=()=>{
+        const inputDot = document.getElementsByClassName('inputDot')[0]
+        const inputDash = document.getElementsByClassName('inputDash')[0]
+        output.innerHTML="";
+
+        let v = input.value.toLowerCase();
+        let x = inputDot.value!='•'||inputDash.value!='-'?{dot:inputDot.value,dash:inputDash.value}:undefined
+        for (let i = 0; i < v.length; i++) {
+            let res;
+            output.innerHTML+=(res=charToMorze(v[i],x?x:undefined))?`<char>${v[i]}</char><value>${res}</value><br>`:`[err]`;
         }
-    </style><br>
-    <div class="msg">
-        Attention, use only latin abc and numbers<br>
-        simbols [ . , / ? ! : ; ` - space @ $ err end ]<br>
-    </div>
-    
-    <p>Change: dot [<input class="inputDot" type="text" value="•" autocomplete="off">] dash [<input class="inputDash" type="text" value="-" autocomplete="off">]</p><br>
-    <input id="input" type="text"><a id="convert">Convert</a><br>
-    <div id="output"></div>
-
-    <script>
-        const input = document.getElementById('input')
-        const output = document.getElementById('output')
-        const btn = document.getElementById('convert')
-
-        const charToMorze = (x,y = {dot:' • ',dash:' - '}) => {
-            const lib = {
-                'a':[1,0],
-                'b':[0,1,1,1],
-                'c':[0,1,0,1],
-                'd':[0,1,1],
-                'e':[1],
-                'f':[1,1,0,1],
-                'g':[0,0,1],
-                'h':[1,1,1,1],
-                'i':[1,1],
-                'j':[1,0,0,0],
-                'k':[0,1,0],
-                'l':[1,0,1,1],
-                'm':[0,0],
-                'n':[0,1],
-                'o':[0,0,0],
-                'p':[1,0,0,1],
-                'q':[0,0,1,0],
-                'r':[1,0,1],
-                's':[1,1,1],
-                't':[0],
-                'u':[1,1,0],
-                'v':[1,1,1,0],
-                'w':[1,0,0],
-                'x':[0,1,1,0],
-                'y':[0,1,0,0],
-                'z':[0,0,1,1],
-
-                '1':[1,0,0,0,0],
-                '2':[1,1,0,0,0],
-                '3':[1,1,1,0,0],
-                '4':[1,1,1,1,0],
-                '5':[1,1,1,1,1],
-                '6':[0,1,1,1,1],
-                '7':[0,0,1,1,1],
-                '8':[0,0,0,1,1],
-                '9':[0,0,0,0,1],
-                '0':[0,0,0,0,0],
-
-                '.':[1,1,1,1,1,1],          
-                ',':[1,0,1,0,1,0],          
-                '\/':[0,1,1,0,1],          
-                '?':[1,1,0,0,1,1],          
-                '!':[0,0,1,1,0,0],          
-                ':':[0,0,0,1,1,1],          
-                ';':[0,1,0,1,0,1],          
-                '`':[1,0,0,0,0,1],          
-                '-':[0,1,1,1,1,0],          
-                ' ':[0,1,1,1,0],          
-                '@':[1,0,0,1,0,1],          
-                '$':[1,1,1,0,1,1,0],
-
-                'err':[1,1,1,1,1,1,1,1],          
-                'end':[1,1,0,1,0],          
-            }
-            let char;
-            if (char = lib[x]) {
-                let res =''
-                char.forEach(el => res+=el!=1?y.dash:y.dot);
-                return res.toString()
-            } else {
-                return undefined
-            }
-        } 
-        btn.onclick=()=>{
-            const inputDot = document.getElementsByClassName('inputDot')[0]
-            const inputDash = document.getElementsByClassName('inputDash')[0]
-            output.innerHTML="";
-            
-            let v = input.value.toLowerCase();
-            let x = inputDot.value!='•'||inputDash.value!='-'?{dot:inputDot.value,dash:inputDash.value}:undefined
-            for (let i = 0; i < v.length; i++) {
-                let res;
-                output.innerHTML+=(res=charToMorze(v[i],x?x:undefined))?`<char>${v[i]}</char><value>${res}</value><br>`:`[err]`;
-            }
-            output.innerHTML+=`<br>to line:<br>`
-            let line = `<code>`
-            for (let i = 0; i < v.length; i++) {
-                let res;
-                line+=(res=charToMorze(v[i],x?x:undefined))?`${res}<space>&nbsp;</space>`:`[err]`;
-            }
-            line+=`</code>`
-            output.innerHTML+=line
+        output.innerHTML+=`<br>to line:<br>`
+        let line = `<code>`
+        for (let i = 0; i < v.length; i++) {
+            let res;
+            line+=(res=charToMorze(v[i],x?x:undefined))?`${res}<space>&nbsp;</space>`:`[err]`;
         }
-    </script>
+        line+=`</code>`
+        output.innerHTML+=line
+    }
+</script>
 </body>
 </html>
